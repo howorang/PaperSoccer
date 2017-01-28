@@ -1,0 +1,10 @@
+.button {
+    -fx-background-radius: 5em;
+    -fx-min-width: 12px;
+    -fx-min-height: 12px;
+    -fx-max-width: 12px;
+    -fx-max-height: 12px;
+    -fx-background-color: black;
+    -fx-background-insets: 0px;
+    -fx-padding: 0px;
+}

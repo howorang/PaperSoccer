@@ -3,7 +3,11 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import common.Network;
 import common.Network.RegisterInLobby;
+import common.config.Settings;
+import common.config.SettingsLoader;
 
+import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
 
@@ -13,21 +17,22 @@ import java.util.Stack;
 public class PaperSoccerServer {
     private Server server;
     private Stack<PlayerConnection> playerConnections = new Stack<>();
+    private Settings serverSettings;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, JAXBException {
         new PaperSoccerServer();
     }
 
-    public PaperSoccerServer() throws IOException {
+    public PaperSoccerServer() throws IOException, JAXBException {
+        serverSettings = SettingsLoader.load(new File("settings.xml"));
+
         server = new Server() {
             @Override
             protected Connection newConnection() {
                 return new PlayerConnection();
             }
         };
-
         Network.register(server);
-
         server.addListener(new Listener() {
 
             @Override
@@ -64,7 +69,7 @@ public class PaperSoccerServer {
             }
         },"Matcher Thread").start();
 
-        server.bind(Network.port);
+        server.bind(serverSettings.getPort());
         server.start();
     }
 }

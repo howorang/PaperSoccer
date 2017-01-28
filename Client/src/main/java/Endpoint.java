@@ -9,7 +9,11 @@ import common.Network.WinMessage;
 import common.Network.RegisterInLobby;
 import common.Network.OpponentDisconnected;
 import common.Player;
+import common.config.Settings;
+import common.config.SettingsLoader;
 
+import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -21,6 +25,8 @@ public class Endpoint {
     public static Endpoint getInstance() {
         return ourInstance;
     }
+
+    private Settings clientSettings;
 
     private Client client;
 
@@ -36,7 +42,13 @@ public class Endpoint {
         this.playWindowController = playWindowController;
     }
 
-    private Endpoint() {
+    private Endpoint()  {
+        try {
+            clientSettings = SettingsLoader.load(new File("settings.xml"));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
         client = new Client();
         client.start();
         Network.register(client);
@@ -81,7 +93,7 @@ public class Endpoint {
         new Thread("Connect") {
             public void run () {
                 try {
-                    client.connect(5000, "localhost", Network.port);
+                    client.connect(5000, "localhost", clientSettings.getPort());
                 } catch (IOException e) {
                     e.printStackTrace();
                     loginWindowController.connectingError();

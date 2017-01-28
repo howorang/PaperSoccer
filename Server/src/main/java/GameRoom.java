@@ -1,6 +1,7 @@
 /**
  * Created by howor on 27.01.2017.
  */
+
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import common.Network.MatchMessage;
@@ -40,23 +41,26 @@ public class GameRoom {
         playerListener = new Listener() {
             @Override
             public void received(Connection c, Object object) {
-                PlayerConnection playerConnection = (PlayerConnection)c;
+                PlayerConnection playerConnection = (PlayerConnection) c;
 
-                if(object instanceof MoveRequest) {
+                if (object instanceof MoveRequest) {
                     MoveRequest moveRequest = (MoveRequest) object;
                     final int x = moveRequest.x;
                     final int y = moveRequest.y;
                     final Player player = moveRequest.player;
-                    if (game.validateMove(x, y, player)) {
-                        game.registerMove(x, y);
+                    try {
+                        game.registerMove(x, y,player);
                         MoveCommand moveCommand = new MoveCommand();
                         moveCommand.player = player;
                         moveCommand.availableFields = new ArrayList<>(Utils.convertToSimpleFields(game.getAvailableFields()));
+                        moveCommand.nextPlayer = game.getCurrentPlayer();
                         moveCommand.x = x;
                         moveCommand.y = y;
                         playerOneConnection.sendTCP(moveCommand);
                         playerTwoConnection.sendTCP(moveCommand);
                         checkAndSendWinMessage();
+                    } catch (WrongMoveException e) {
+                        System.err.println(e.getMessage());
                     }
                 }
             }

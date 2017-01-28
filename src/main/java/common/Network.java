@@ -42,6 +42,7 @@ public class Network {
     public static class MoveCommand {
         public int x,y;
         public Player player;
+        public Player nextPlayer;
         public ArrayList<SimpleField> availableFields;
     }
 

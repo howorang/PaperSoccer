@@ -70,7 +70,7 @@ public class Endpoint {
                 if(object instanceof MoveCommand) {
                     MoveCommand moveCommand = (MoveCommand) object;
                     playWindowController.move(moveCommand.x,moveCommand.y,
-                            moveCommand.player,moveCommand.availableFields);
+                            moveCommand.player,moveCommand.nextPlayer,moveCommand.availableFields);
                 }
 
                 if(object instanceof WinMessage) {

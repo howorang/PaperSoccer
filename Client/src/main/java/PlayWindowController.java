@@ -82,13 +82,13 @@ public class PlayWindowController {
         updatePlayingField();
     }
 
-    public void move(int x, int y, Player player, List<Network.SimpleField> availableFields) {
+    public void move(int x, int y, Player player,   Player nextPlayer, List<Network.SimpleField> availableFields) {
         Platform.runLater(() -> {
             clearEnabledFields();
             drawLine(lastPressed,buttons[x][y]);
             lastPressed = buttons[x][y];
             enableAvailableFields(availableFields);
-            scoreLabel.setText("Teraz gra: " + (player == Player.ONE ? Player.TWO.name() : Player.ONE.name()));
+            scoreLabel.setText("Teraz gra: " + nextPlayer.name());
         });
     }
 

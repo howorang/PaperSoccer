@@ -48,7 +48,10 @@ public class Game {
         return currentPlayer;
     }
 
-    public void registerMove(int x, int y) {
+    public void registerMove(int x, int y,Player player) throws WrongMoveException {
+        if(!validateMove(x,y,player)) {
+            throw new WrongMoveException(x,y,player);
+        }
         checkWinCondition(x,y);
         moveField = fields[x][y];
         if (lastMove != null) {
@@ -73,7 +76,7 @@ public class Game {
         }
     }
 
-    public boolean validateMove(int x, int y,Player player) {
+    private boolean validateMove(int x, int y,Player player) {
         boolean playerCheck = player == currentPlayer;
         boolean fieldPositionCheck = !isOverBoundary(x,y);
         boolean isAvailableCheck = false;
@@ -111,7 +114,22 @@ public class Game {
 
     private boolean checkFieldAvailability(Field field) {
         if (isAlong(moveField, field)) return false;
+        if(isAlongWall(moveField,field)) return false;
         return true;
+    }
+
+    private boolean isAlongWall(Field moveField, Field field) {
+        if(isOnWall(moveField)) {
+            if(field.getX() == 0 || field.getX() == 8) {
+                return true;
+            }
+
+            if(field.getY() == 1 || field.getY() == 11) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean isAlong(Field moveField, Field field) {
@@ -121,10 +139,27 @@ public class Game {
     }
 
     private boolean bounce(Field field) {
-        return field.getState().equals(FieldState.CHECKED);
+        boolean isThroughChecked = field.getState().equals(FieldState.CHECKED);
+        boolean isWall = isOnWall(field);
+        return isWall || isThroughChecked;
 
     }
 
+    private boolean isOnWall(Field field) {
+        final int x = field.getX();
+        final int y = field.getY();
+
+        if (y == 1 || y == 11) {
+            if (x != 4) {
+                return true;
+            }
+        }
+
+        if (x == 0 || x == 8) {
+            return true;
+        }
+        return false;
+    }
 
 
     private boolean isOverBoundary(int x, int y) {
